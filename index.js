@@ -36,11 +36,11 @@ app.get('/api/movies/:id', (req, res) => {
 });
 
 app.post('/api/movies', (req, res) => {
-    const { title, director, year } = req.body;
-    const safeValues = [title, director, year];
+    const { title, director, year, rating, genre, poster } = req.body;
+    const safeValues = [title, director, year, rating, genre, poster];
 
     pool
-    .query('INSERT INTO movies (title, director, year) VALUES ($1, $2, $3) RETURNING *', safeValues)
+    .query('INSERT INTO movies (title, director, year, rating, genre, poster) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', safeValues)
     .then(({ rowCount, rows }) => {
         if (rowCount === 0) {
             res.status(500).json({ error: 'Failed to add the movie' });
@@ -53,12 +53,12 @@ app.post('/api/movies', (req, res) => {
 
 app.put('/api/movies/:id', (req, res) => {
     const { id } = req.params;
-    const { title, director, year } = req.body;
+    const { title, director, year, rating, genre } = req.body;
 
-    const safeValues = [title, director, year, id];
+    const safeValues = [title, director, year, rating, genre, id];
 
     pool
-    .query('UPDATE movies SET title = $1, director = $2, year = $3 WHERE id = $4 RETURNING *', safeValues)
+    .query('UPDATE movies SET title = $1, director = $2, year = $3, rating = $4, genre = $5 WHERE id = $6 RETURNING *', safeValues)
     .then(({ rowCount, rows }) => {
         if (rowCount === 0) {
             res.status(404).json({ error: `Movie with id ${id} Not Found` });
